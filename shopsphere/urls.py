@@ -23,6 +23,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # tailwind's urls
     path("__reload__/", include("django_browser_reload.urls")),
-    # your urls
+    # Auth URLs
+    path('auth/', include('django.contrib.auth.urls')),
+    # Your app URLs
     path('product/', include('product.urls', namespace='product')),
-]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('cart/', include('cart.urls', namespace='cart')),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
