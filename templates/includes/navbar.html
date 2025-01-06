@@ -1,0 +1,111 @@
+<!-- Navbar -->
+<nav class="bg-indigo-600" id="navbar" role="navigation">
+    <!-- Container -->
+    <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+      <div class="relative flex items-center justify-between h-16">
+        <!-- Left Section (Hamburger menu and logo) -->
+        <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
+          <!-- Hamburger Icon -->
+          <button id="nav-hamburger-menu" class="text-white" aria-label="Open Menu" aria-expanded="false">
+            <i class="nav-icon-a11y nav-sprite">&#9776;</i> <!-- Hamburger icon (using Unicode character for simplicity) -->
+          </button>
+        </div>
+  
+        <!-- Logo -->
+        <div class="flex items-center">
+          <div id="nav-logo">
+            <a href="/" class="text-white text-xl">
+              <span class="nav-sprite nav-logo-base"></span>
+              <span id="logo-ext" class="nav-sprite nav-logo-ext"></span>
+              <span class="nav-logo-locale">ShopSphere</span>
+            </a>
+          </div>
+        </div>
+  
+        <!-- Right Section (Signin, Cart, and Account) -->
+        <div class="flex items-center space-x-4 sm:space-x-6">
+          <!-- Sign in Link -->
+          <a href="https://www.example.com/signin" class="text-white">Sign in</a>
+  
+          <!-- Your Account Link -->
+          <a href="/account" class="text-white">
+            <i class="nav-icon nav-sprite">Your account</i>
+          </a>
+  
+          <!-- Cart Link -->
+          <a href="/cart" class="text-white">
+            <div class="flex items-center">
+              <span class="nav-icon nav-sprite">
+                <span id="nav-cart-count" class="text-white">0</span>
+              </span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Search Bar -->
+    <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+      <form action="/search" method="get" class="flex items-center space-x-4">
+        <input type="text" name="k" id="nav-search-keywords" class="w-full py-2 px-4 text-black rounded-lg" placeholder="Search ShopSphere" aria-label="Search ShopSphere">
+        <button type="submit" class="text-white bg-blue-500 py-2 px-4 rounded-md">Go</button>
+      </form>
+    </div>
+  
+    <!-- Navigation Links (Categories, Deals, Sell) -->
+    <div class="bg-indigo-700 text-white py-2">
+      <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+        <div class="hidden sm:flex justify-around">
+          <a href="/categories" class="text-white">Shop By Categories</a>
+          <a href="/deals" class="text-white">Deals</a>
+          <a href="/sell" class="text-white">Sell</a>
+        </div>
+  
+        <!-- Mobile Sidebar (Hidden by default) -->
+        <div id="mobile-menu" class="sm:hidden fixed top-0 right-0 w-3/5 h-full bg-white shadow-lg z-50 transform translate-x-full transition-all duration-300">
+          <!-- Close Button at Top Right -->
+          <button id="close-sidebar" class="absolute top-4 right-4 text-3xl text-gray-600 hover:text-indigo-500">
+            &times; <!-- Close Icon -->
+          </button>
+  
+          <!-- Sidebar Content -->
+          <ul class="flex flex-col items-center py-8">
+            <li><a href="/categories" class="text-2xl font-semibold text-gray-800 hover:text-indigo-500 py-4">Shop By Categories</a></li>
+            <li><a href="/deals" class="text-2xl font-semibold text-gray-800 hover:text-indigo-500 py-4">Deals</a></li>
+            <li><a href="/sell" class="text-2xl font-semibold text-gray-800 hover:text-indigo-500 py-4">Sell</a></li>
+          </ul>
+        </div>
+  
+        <!-- Mobile Menu Overlay -->
+        <div id="overlay" class="w-full h-full bg-black opacity-50 absolute top-0 left-0 hidden"></div>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Scripts for mobile menu toggle -->
+  <script>
+    const hamburgerMenu = document.getElementById('nav-hamburger-menu');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const overlay = document.getElementById('overlay');
+    const closeSidebar = document.getElementById('close-sidebar');
+  
+    // Open the mobile sidebar
+    hamburgerMenu.addEventListener('click', () => {
+      mobileMenu.classList.remove('translate-x-full');
+      mobileMenu.classList.add('translate-x-0');
+      overlay.classList.remove('hidden');
+    });
+  
+    // Close the mobile sidebar
+    closeSidebar.addEventListener('click', () => {
+      mobileMenu.classList.add('translate-x-full');
+      overlay.classList.add('hidden');
+    });
+  
+    // Close the mobile sidebar when clicking on the overlay
+    overlay.addEventListener('click', () => {
+      mobileMenu.classList.add('translate-x-full');
+      overlay.classList.add('hidden');
+    });
+  </script>
+  
