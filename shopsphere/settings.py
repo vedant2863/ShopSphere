@@ -147,7 +147,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 
 LOGIN_REDIRECT_URL = "/product/"
-LOGOUT_REDIRECT_URL = "/product"
+LOGOUT_REDIRECT_URL = "/product/home/"
 
 LOGIN_URL = "/product/login"
 

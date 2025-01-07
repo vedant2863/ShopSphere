@@ -1,0 +1,64 @@
+<!-- templates/home.html -->
+{% extends 'layout/layout.html' %}
+
+{% block content %}
+<div class="container mx-auto p-4">
+    <!-- Page Header -->
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-800">Welcome to ShopSphere</h1>
+        <p class="text-xl text-gray-600 mt-2">Your one-stop eCommerce platform</p>
+    </div>
+
+    <!-- About ShopSphere Section -->
+    <section class="mb-8">
+        <h2 class="text-3xl font-semibold text-gray-800">What is ShopSphere?</h2>
+        <p class="text-lg text-gray-600 mt-4">
+            ShopSphere is a modern eCommerce platform designed to help small and medium-sized businesses set up and run their online stores with ease. Whether you are selling products, services, or digital content, ShopSphere provides you with everything you need to get started.
+        </p>
+    </section>
+
+    <!-- How to Set Up Section -->
+    <section class="mb-8">
+        <h2 class="text-3xl font-semibold text-gray-800">How to Set Up ShopSphere?</h2>
+        <div class="text-lg text-gray-600 mt-4">
+            <ol class="list-decimal list-inside space-y-4">
+                <li>Sign up and create your account.</li>
+                <li>Set up your store by adding products, pricing, and images.</li>
+                <li>Customize your store layout to match your brand.</li>
+                <li>Set up payment options and shipping preferences.</li>
+                <li>Publish your store and start selling!</li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- Key Features Section -->
+    <section class="mb-8">
+        <h2 class="text-3xl font-semibold text-gray-800">Key Features of ShopSphere</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-4">
+            <div class="bg-white shadow-lg rounded-lg p-6">
+                <h3 class="text-2xl font-semibold text-indigo-600">Easy Setup</h3>
+                <p class="mt-2 text-gray-600">Quickly set up your store in just a few steps.</p>
+            </div>
+            <div class="bg-white shadow-lg rounded-lg p-6">
+                <h3 class="text-2xl font-semibold text-indigo-600">Customizable Design</h3>
+                <p class="mt-2 text-gray-600">Choose from a variety of themes to customize your store's look.</p>
+            </div>
+            <div class="bg-white shadow-lg rounded-lg p-6">
+                <h3 class="text-2xl font-semibold text-indigo-600">Payment Integration</h3>
+                <p class="mt-2 text-gray-600">Accept payments securely via multiple gateways including Razorpay, PayPal, and Stripe.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="text-center mt-8">
+        <h2 class="text-3xl font-semibold text-gray-800">Get Started Today</h2>
+        <p class="text-lg text-gray-600 mt-4">Ready to create your online store? Sign up today and start building your business with ShopSphere.</p>
+        <div class="mt-6">
+            <a href="{% url 'product:register' %}" class="bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 transition duration-200">
+                Start Shopping
+            </a>
+        </div>
+    </section>
+</div>
+{% endblock %}

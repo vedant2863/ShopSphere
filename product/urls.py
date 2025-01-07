@@ -38,4 +38,6 @@ urlpatterns = [
         auth_views.PasswordResetCompleteView.as_view(),
         name="password_reset_complete",
     ),
+    # Home page
+    path("home/", views.home, name="home"),
 ]
