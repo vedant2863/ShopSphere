@@ -1,4 +1,4 @@
-<!-- Navbar -->
+
 <nav class="bg-indigo-700 text-white shadow-lg" id="navbar" role="navigation">
   <!-- Container -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -6,7 +6,8 @@
       <!-- Left Section (Logo) -->
       <div class="flex items-center space-x-2">
         <div id="nav-logo">
-          <a href="/" class="text-white text-3xl font-semibold hover:text-indigo-400 transition duration-300 ease-in-out">
+          <a href="/"
+            class="text-white text-3xl font-semibold hover:text-indigo-400 transition duration-300 ease-in-out">
             <span class="nav-sprite nav-logo-base"></span>
             <span id="logo-ext" class="nav-sprite nav-logo-ext"></span>
             <span class="nav-logo-locale">ShopSphere</span>
@@ -18,24 +19,26 @@
       <div class="flex items-center space-x-6 sm:space-x-8">
         <!-- Hamburger Icon for Mobile -->
         <div class="sm:hidden">
-          <button id="nav-hamburger-menu" class="text-white focus:outline-none hover:text-indigo-300" aria-label="Open Menu">
+          <button id="nav-hamburger-menu" class="text-white focus:outline-none hover:text-indigo-300"
+            aria-label="Open Menu">
             <i class="nav-icon-a11y nav-sprite">&#9776;</i> <!-- Hamburger icon -->
           </button>
         </div>
 
         <!-- Cart Link -->
-        <a href="/cart" class="relative text-white">
+        <a href="/cart" class="relative text-white" aria-label="View Cart">
           <div class="flex items-center space-x-2">
             <!-- Cart Icon -->
             <span class="space-x-2 mx-5">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M6 6h15l-1.5 9h-12L6 6z"></path>
                 <circle cx="9" cy="19" r="2"></circle>
                 <circle cx="18" cy="19" r="2"></circle>
               </svg>
               <!-- Cart Count Badge -->
               <span id="nav-cart-count"
-                class="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center transform translate-x-1 translate-y-1">
+                class="absolute top-0 right-0 bg-red-600 text-black text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center transform translate-x-1 translate-y-1">
                 {{ total_items }}
               </span>
             </span>
@@ -48,7 +51,7 @@
           <p class="text-lg font-medium text-gray-900">Welcome, {{ user.username }}!</p>
 
           <!-- Profile and Logout Links -->
-          <form action="{% url 'product:logout' %}" method="post">
+          <form action="{% url 'product:logout' %}" method="post" class="space-x-3">
             {% csrf_token %}
             <button type="submit" class="text-sm text-black hover:text-gray-900 transition duration-300">Logout</button>
           </form>
@@ -56,8 +59,10 @@
         {% else %}
         <!-- Login and Register Links -->
         <div class="flex items-center space-x-6">
-          <a href="{% url 'product:login' %}" class="text-sm text-white hover:text-indigo-400 transition duration-300">Login</a>
-          <a href="{% url 'product:register' %}" class="text-sm text-white hover:text-indigo-400 transition duration-300">Register</a>
+          <a href="{% url 'product:login' %}"
+            class="text-sm text-white hover:text-indigo-400 transition duration-300">Login</a>
+          <a href="{% url 'product:register' %}"
+            class="text-sm text-white hover:text-indigo-400 transition duration-300">Register</a>
         </div>
         {% endif %}
       </div>
@@ -79,13 +84,15 @@
   <div class="bg-indigo-800 text-white py-3">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="hidden sm:flex justify-around space-x-8">
-        <a href="/categories" class="text-lg text-white hover:text-indigo-400 transition duration-300">Shop By Categories</a>
+        <a href="/categories" class="text-lg text-white hover:text-indigo-400 transition duration-300">Shop By
+          Categories</a>
         <a href="/deals" class="text-lg text-white hover:text-indigo-400 transition duration-300">Deals</a>
         <a href="/sell" class="text-lg text-white hover:text-indigo-400 transition duration-300">Sell</a>
       </div>
 
       <!-- Mobile Sidebar (Hidden by default) -->
-      <div id="mobile-menu" class="sm:hidden fixed top-0 right-0 w-3/5 h-full bg-white shadow-lg z-50 transform translate-x-full transition-all duration-300">
+      <div id="mobile-menu"
+        class="sm:hidden fixed top-0 right-0 w-3/5 h-full bg-white shadow-lg z-50 transform translate-x-full transition-all duration-300">
         <!-- Close Button at Top Right -->
         <button id="close-sidebar" class="absolute top-4 right-4 text-3xl text-gray-600 hover:text-indigo-500">
           &times; <!-- Close Icon -->
@@ -93,9 +100,15 @@
 
         <!-- Sidebar Content -->
         <ul class="flex flex-col items-center py-8 space-y-6">
-          <li><a href="/categories" class="text-2xl font-semibold text-gray-800 hover:text-indigo-500 transition duration-300 py-4">Shop By Categories</a></li>
-          <li><a href="/deals" class="text-2xl font-semibold text-gray-800 hover:text-indigo-500 transition duration-300 py-4">Deals</a></li>
-          <li><a href="/sell" class="text-2xl font-semibold text-gray-800 hover:text-indigo-500 transition duration-300 py-4">Sell</a></li>
+          <li><a href="/categories"
+              class="text-2xl font-semibold text-gray-800 hover:text-indigo-500 transition duration-300 py-4">Shop By
+              Categories</a></li>
+          <li><a href="/deals"
+              class="text-2xl font-semibold text-gray-800 hover:text-indigo-500 transition duration-300 py-4">Deals</a>
+          </li>
+          <li><a href="/sell"
+              class="text-2xl font-semibold text-gray-800 hover:text-indigo-500 transition duration-300 py-4">Sell</a>
+          </li>
         </ul>
       </div>
 
@@ -108,6 +121,7 @@
 <!-- Scripts for mobile menu toggle -->
 <script>
   document.addEventListener('DOMContentLoaded', function () {
+    // Menu toggle
     const hamburgerMenu = document.getElementById('nav-hamburger-menu');
     const mobileMenu = document.getElementById('mobile-menu');
     const overlay = document.getElementById('overlay');
@@ -131,5 +145,60 @@
       mobileMenu.classList.add('translate-x-full');
       overlay.classList.add('hidden');
     });
+
+    // Cart update functionality (using event delegation for efficiency)
+    document.querySelector('#nav-cart-count').addEventListener('change', function () {
+      const cartItemId = this.dataset.cartItemId;
+      const newQuantity = parseInt(this.value, 10);
+
+      if (newQuantity < 1) {
+        alert('Quantity must be at least 1');
+        return;
+      }
+
+      const csrfToken = getCookie('csrftoken'); // CSRF token for security
+
+      // Send the AJAX request to update the cart item quantity
+      fetch(`/cart/update/${cartItemId}/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken,
+        },
+        body: JSON.stringify({ quantity: newQuantity }),
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Update the displayed total price and cart item count
+            document.querySelector(`#cart-item-total-${cartItemId}`).innerText = `$${data.item_total}`;
+            document.querySelector('#cart-total').innerText = `$${data.total_cost}`;
+            document.querySelector('#cart-counter').innerText = data.total_items;
+          } else {
+            alert(data.message || 'Failed to update cart item quantity');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while updating the cart');
+        });
+    });
+
+    // Function to get CSRF token (needed for security)
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
   });
 </script>
+
