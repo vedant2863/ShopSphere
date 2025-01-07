@@ -1,46 +1,46 @@
-{extends 'layout/layout.html' %}
+{% extends 'layout/layout.html' %}
 
 {% block title %}Order Summary{% endblock %}
 
-
 {% block content %}
-<h1>Order Summary</h1>
-<p><strong>Order ID:</strong> {{ order.id }}</p>
-<p><strong>Status:</strong> {{ order.status }}</p>
-<p><strong>Total Cost:</strong> ${{ order.total_cost }}</p>
-<p><strong>Created At:</strong> {{ order.created_at }}</p>
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-semibold mb-4 text-center">Order Summary</h1>
 
-<h2>Order Items</h2>
-<table>
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in order.items.all %}
-        <tr>
-            <td>{{ item.product.name }}</td>
-            <td>{{ item.quantity }}</td>
-            <td>${{ item.price }}</td>
-            <td>${{ item.quantity|multiply:item.price }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <div class="mb-6">
+        <p><strong class="font-semibold">Order ID:</strong> {{ order.id }}</p>
+        <p><strong class="font-semibold">Status:</strong> {{ order.status }}</p>
+        <p><strong class="font-semibold">Total Cost:</strong> ${{ order.total_cost }}</p>
+        <p><strong class="font-semibold">Created At:</strong> {{ order.created_at }}</p>
+    </div>
 
-<h2>Payment Details</h2>
-<p>Payment method: Credit Card</p>
-<p>Card Number: XXXX-XXXX-XXXX-1234</p>
-<p>Expiration Date: MM/YY</p>
-<p>CVV: XXX</p>
+    <h2 class="text-2xl font-semibold mb-4">Order Items</h2>
+    <table class="min-w-full table-auto border-collapse border border-gray-300">
+        <thead>
+            <tr class="bg-gray-100">
+                <th class="px-4 py-2 text-left">Product</th>
+                <th class="px-4 py-2 text-left">Quantity</th>
+                <th class="px-4 py-2 text-left">Price</th>
+                <th class="px-4 py-2 text-left">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.items.all %}
+            <tr class="border-t">
+                <td class="px-4 py-2">{{ item.product.name }}</td>
+                <td class="px-4 py-2">{{ item.quantity }}</td>
+                <td class="px-4 py-2">${{ item.price }}</td>
+                <td class="px-4 py-2">${{ item.total_price }}</td> <!-- Use the calculated total price here -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-<h2>Order Summary</h2>
-<p>Subtotal: ${{order.total_cost}}</p>
-<p>Shipping: ${{order.total_cost|multiply:0.05}}</p>
-<p>Tax: ${{order.total_cost|multiply:0.08}}</p>
-<p>Total: ${{order.total_cost|add:order.total_cost|multiply:0.08}}</p>
+    <h2 class="text-2xl font-semibold mt-8 mb-4">Payment Details</h2>
+    <div class="space-y-2">
+        <p><strong class="font-semibold">Payment Method:</strong> Credit Card</p>
+        <p><strong class="font-semibold">Card Number:</strong> XXXX-XXXX-XXXX-1234</p>
+        <p><strong class="font-semibold">Expiration Date:</strong> MM/YY</p>
+        <p><strong class="font-semibold">CVV:</strong> XXX</p>
+    </div>
+</div>
 {% endblock %}
