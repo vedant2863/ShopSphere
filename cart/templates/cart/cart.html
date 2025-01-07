@@ -7,28 +7,35 @@
     {% if cart.cart_items.count == 0 %}
     <p class="text-center text-gray-600">Your cart is empty.</p>
     {% else %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="flex flex-col space-y-6">
         {% for item in cart.cart_items.all %}
-        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div class="flex justify-between">
-                <div class="flex">
-                    <!-- Display product image -->
-                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
-                        class="w-24 h-24 object-cover rounded-lg mr-4" />
-                    <div>
-                        <h3 class="text-xl font-semibold text-gray-900">{{ item.product.name }}</h3>
-                        <p class="text-sm text-gray-600">${{ item.product.price }}</p>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <!-- Quantity input field with auto-update -->
-                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1"
-                        class="border p-2 w-16 rounded-lg mr-2 quantity-input" data-cart-item-id="{{ item.id }}" />
-                </div>
+        <div
+            class="flex flex-col md:flex-row items-center bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+            <!-- Product Image -->
+            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
+                class="w-32 h-32 object-cover rounded-lg mr-0 md:mr-6 mb-4 md:mb-0" />
+
+            <!-- Product Details -->
+            <div class="flex-1">
+                <h3 class="text-xl font-semibold text-gray-900">{{ item.product.name }}</h3>
+                <p class="text-sm text-gray-600">${{ item.product.price }}</p>
             </div>
 
-            <div class="mt-4 flex justify-between items-center">
-                <p class="text-lg font-semibold text-gray-800" id="cart-item-total-{{ item.id }}">Total: ${{ item.total_price }}</p>
+            <!-- Quantity and Total -->
+            <div class="flex items-center space-x-4">
+                <!-- Quantity Input -->
+                <div>
+                    <label for="quantity-{{ item.id }}" class="sr-only">Quantity</label>
+                    <input type="number" id="quantity-{{ item.id }}" name="quantity" value="{{ item.quantity }}" min="1"
+                        class="border p-2 w-16 rounded-lg quantity-input" data-cart-item-id="{{ item.id }}" />
+                </div>
+
+                <!-- Total Price -->
+                <p class="text-lg font-semibold text-gray-800" id="cart-item-total-{{ item.id }}">${{item.total_price}}</p>
+            </div>
+
+            <!-- Remove Button -->
+            <div class="mt-4 md:mt-0">
                 <a href="{% url 'cart:remove_from_cart' item.id %}" class="text-red-500 hover:text-red-700">Remove</a>
             </div>
         </div>
@@ -42,9 +49,9 @@
 
     <!-- Checkout Section -->
     <div class="mt-6 flex justify-center">
-        <a  class="bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-700 transition-colors">Proceed to Checkout</a>
+        <a class="bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 transition-colors">Proceed to
+            Checkout</a>
     </div>
-
     {% endif %}
 </div>
 
@@ -53,14 +60,22 @@
     document.querySelectorAll('.quantity-input').forEach(input => {
         input.addEventListener('change', function () {
             const cartItemId = this.dataset.cartItemId;
-            const newQuantity = this.value;
-            const csrfToken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+            const newQuantity = parseInt(this.value, 10);
+            const csrfToken = getCookie('csrftoken');
 
-            // Display loading indication on the cart item
+            // Validate quantity client-side
+            if (newQuantity < 1) {
+                alert('Quantity must be at least 1');
+                this.value = 1; // Reset to 1
+                return;
+            }
+
+            // Display updating feedback
             const itemTotalElement = document.querySelector(`#cart-item-total-${cartItemId}`);
+            const originalText = itemTotalElement.innerText;
             itemTotalElement.innerText = 'Updating...';
 
-            // Perform AJAX request to update the cart item quantity
+            // Perform AJAX request
             fetch(`/cart/update/ajax/${cartItemId}/`, {
                 method: 'POST',
                 headers: {
@@ -69,22 +84,43 @@
                 },
                 body: JSON.stringify({ quantity: newQuantity }),
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update the total price for the item and overall cart
-                    itemTotalElement.innerText = `Total: $${data.total_price}`;
-                    document.querySelector('#cart-total').innerText = `$${data.cart_total}`;
-                } else {
-                    itemTotalElement.innerText = 'Error updating';
-                    alert(data.message || 'Failed to update cart item quantity');
-                }
-            })
-            .catch(error => {
-                itemTotalElement.innerText = 'Error updating';
-                alert('An error occurred while updating the cart');
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update the totals on success
+                        itemTotalElement.innerText = `$${data.total_price}`;
+                        document.querySelector('#cart-total').innerText = `$${data.cart_total}`;
+                    } else {
+                        // Revert to original and alert on failure
+                        itemTotalElement.innerText = originalText;
+                        alert(data.message || 'Failed to update cart item quantity');
+                    }
+                })
+                .catch(error => {
+                    // Revert to original and alert on error
+                    itemTotalElement.innerText = originalText;
+                    alert('An error occurred while updating the cart');
+                    console.error('Error:', error);
+                });
         });
     });
+
+
+    // Function to get CSRF token from cookies
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 </script>
 {% endblock %}

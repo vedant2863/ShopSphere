@@ -1,0 +1,46 @@
+{extends 'layout/layout.html' %}
+
+{% block title %}Order Summary{% endblock %}
+
+
+{% block content %}
+<h1>Order Summary</h1>
+<p><strong>Order ID:</strong> {{ order.id }}</p>
+<p><strong>Status:</strong> {{ order.status }}</p>
+<p><strong>Total Cost:</strong> ${{ order.total_cost }}</p>
+<p><strong>Created At:</strong> {{ order.created_at }}</p>
+
+<h2>Order Items</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in order.items.all %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>${{ item.price }}</td>
+            <td>${{ item.quantity|multiply:item.price }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>Payment Details</h2>
+<p>Payment method: Credit Card</p>
+<p>Card Number: XXXX-XXXX-XXXX-1234</p>
+<p>Expiration Date: MM/YY</p>
+<p>CVV: XXX</p>
+
+<h2>Order Summary</h2>
+<p>Subtotal: ${{order.total_cost}}</p>
+<p>Shipping: ${{order.total_cost|multiply:0.05}}</p>
+<p>Tax: ${{order.total_cost|multiply:0.08}}</p>
+<p>Total: ${{order.total_cost|add:order.total_cost|multiply:0.08}}</p>
+{% endblock %}

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     #  your apps
     "product",
     "cart",
+    'order',
 ]
 
 TAILWIND_APP_NAME = "theme"  # This is the name of the app that will be used to generate the tailwind files

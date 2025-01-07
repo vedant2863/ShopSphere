@@ -1,3 +1,4 @@
+# cart/urls.py
 from django.urls import path
 from . import views
 
@@ -10,7 +11,7 @@ urlpatterns = [
     path("update/<int:cart_item_id>/", views.update_cart, name="update_cart"),
     path(
         "update/ajax/<int:cart_item_id>/",
-        views.update_cart_ajax,
+        views.update_cart_item_quantity,
         name="update_cart_ajax",
-    ),  # New AJAX path
+    ),
 ]

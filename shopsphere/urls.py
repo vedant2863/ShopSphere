@@ -28,4 +28,5 @@ urlpatterns = [
     # Your app URLs
     path('product/', include('product.urls', namespace='product')),
     path('cart/', include('cart.urls', namespace='cart')),
+    path('orders/', include('order.urls', namespace='orders')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
