@@ -172,5 +172,5 @@ SITE_ID = 1
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
 
 # Razorpay API credentials
-RAZORPAY_KEY_ID = "your_razorpay_key_id"
-RAZORPAY_KEY_SECRET = "your_razorpay_key_secret"
+RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
