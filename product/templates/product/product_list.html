@@ -32,13 +32,14 @@
             </a>
 
             <!-- Add to Cart Button -->
-            <form action="{% url 'cart:add_to_cart' product.id %}" method="post">
+            <form data-product-id="{{ product.id }}" class="add-to-cart-form">
                 {% csrf_token %}
-                <button type="submit"
+                <button type="button"
                     class="mt-4 bg-blue-600 text-white py-2 px-4 rounded-full hover:bg-blue-700 transition duration-300">
                     Add to Cart
                 </button>
             </form>
+
         </div>
         {% endfor %}
         {% else %}
@@ -46,4 +47,86 @@
         {% endif %}
     </div>
 </div>
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Select all add-to-cart forms
+        const addToCartForms = document.querySelectorAll(".add-to-cart-form");
+
+        if (addToCartForms.length === 0) {
+            console.error("No add-to-cart forms found.");
+            return; // Exit early if no forms exist
+        }
+
+        // Iterate through forms and attach event listeners
+        addToCartForms.forEach(form => {
+            form.addEventListener("click", function (event) {
+                event.preventDefault(); // Prevent default form submission
+
+                const productId = form.getAttribute("data-product-id"); // Get product ID
+                const csrfToken = getCookie("csrftoken"); // Fetch CSRF token
+
+                if (!productId || !csrfToken) {
+                    console.error("Missing product ID or CSRF token.");
+                    return;
+                }
+
+                // Send AJAX request to add the product to the cart
+                fetch(`/cart/add/${productId}/`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrfToken
+                    },
+                    body: JSON.stringify({ product_id: productId })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Failed to add product.");
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            const cartCounter = document.getElementById("cart-counter");
+                            if (cartCounter) {
+                                cartCounter.innerText = data.cart_count;
+                            }
+
+                            const feedback = document.createElement("div");
+                            feedback.innerText = "Product added!";
+                            feedback.className = "text-green-600 mt-2 text-sm";
+                            form.appendChild(feedback);
+
+                            setTimeout(() => feedback.remove(), 3000);
+                        } else {
+                            alert(data.message || "Failed to add product to cart.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        alert("An error occurred while adding the product to the cart.");
+                    });
+            });
+        });
+
+        // Function to get CSRF token from cookies
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    })
+</script>
+
+
 {% endblock %}

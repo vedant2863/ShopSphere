@@ -14,23 +14,47 @@ def get_or_create_cart(user):
 
 
 @login_required
-def view_cart(request):
-    cart = get_or_create_cart(request.user)  # Get only the cart
-    return render(request, "cart/cart.html", {"cart": cart})
+def cart_view(request):
+    cart = request.user.cart  # Assuming each user has a cart
+    total_items = sum(
+        item.quantity for item in cart.cart_items.all()
+    )  # Count total products
+    context = {
+        "cart": cart,
+        "total_items": total_items,
+    }
+    return render(request, "cart/cart.html", context)
 
 
 @login_required
 def add_to_cart(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    cart = get_or_create_cart(request.user)  # Unpack only cart
+    if request.method == "POST":
+        try:
+            product = get_object_or_404(Product, id=product_id)
+            cart = get_or_create_cart(request.user)
 
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+            # Add or update the cart item
+            cart_item, created = CartItem.objects.get_or_create(
+                cart=cart, product=product
+            )
+            if not created:
+                cart_item.quantity += 1
+            cart_item.save()
 
-    if not created:
-        cart_item.quantity += 1
-    cart_item.save()
+            return JsonResponse(
+                {
+                    "success": True,
+                    "message": "Product added to cart.",
+                    "cart_count": cart.cart_items.count(),  # Optional: Return cart count
+                }
+            )
 
-    return redirect(request.META.get("HTTP_REFERER", "product:product_list"))
+        except Exception as e:
+            return JsonResponse({"success": False, "message": str(e)}, status=400)
+
+    return JsonResponse(
+        {"success": False, "message": "Invalid request method."}, status=400
+    )
 
 
 @login_required
@@ -40,22 +64,22 @@ def remove_from_cart(request, cart_item_id):
     return redirect("cart:view_cart")
 
 
-@login_required
-def update_cart(request, cart_item_id):
-    cart_item = get_object_or_404(CartItem, id=cart_item_id)
+# @login_required
+# def update_cart(request, cart_item_id):
+#     cart_item = get_object_or_404(CartItem, id=cart_item_id)
 
-    if request.method == "POST":
-        quantity = request.POST.get("quantity")
-        if quantity and quantity.isdigit() and int(quantity) > 0:
-            cart_item.quantity = int(quantity)
-            cart_item.save()
-        return redirect("cart:view_cart")
-    return JsonResponse({"error": "Invalid request"}, status=400)
+#     if request.method == "POST":
+#         quantity = request.POST.get("quantity")
+#         if quantity and quantity.isdigit() and int(quantity) > 0:
+#             cart_item.quantity = int(quantity)
+#             cart_item.save()
+#         return redirect("cart:view_cart")
+#     return JsonResponse({"error": "Invalid request"}, status=400)
 
 
 # Handle AJAX for updating cart via POST request
 @login_required
-def update_cart_item_quantity(request, cart_item_id):
+def update_cart(request, cart_item_id):
     if request.method == "POST":
         try:
             # Parse JSON data from the request
@@ -76,15 +100,25 @@ def update_cart_item_quantity(request, cart_item_id):
             cart_item.quantity = quantity
             cart_item.save()
 
+            # Calculate the total number of items in the cart
+            total_cart_items = sum(
+                item.quantity for item in cart_item.cart.cart_items.all()
+            )
+
             # Return updated prices
             return JsonResponse(
                 {
                     "success": True,
                     "total_price": cart_item.total_price,
                     "cart_total": cart_item.cart.total_cost,
+                    "total_cart_items": total_cart_items,
                 }
             )
 
+        except json.JSONDecodeError:
+            return JsonResponse(
+                {"success": False, "message": "Invalid JSON data"}, status=400
+            )
         except CartItem.DoesNotExist:
             return JsonResponse(
                 {"success": False, "message": "Cart item not found"}, status=404

@@ -2,60 +2,74 @@
 
 {% block content %}
 <div class="container mx-auto p-4">
-    <h2 class="text-3xl font-bold mb-4 text-center">Your Shopping Cart</h2>
+    <!-- Cart Header with Total Items -->
+    <div class="cart-summary mb-4 flex justify-between items-center">
+        <h2 class="text-3xl font-bold">Shopping Cart</h2>
+        <div class="relative">
+            <a href="{% url 'cart:cart_view' %}" class="relative flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 6h15l-1.5 9h-12L6 6z"></path>
+                    <circle cx="9" cy="19" r="2"></circle>
+                    <circle cx="18" cy="19" r="2"></circle>
+                </svg>
+                <span id="cart-counter"
+                    class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    {{ total_items }}
+                </span>
+            </a>
+        </div>
+    </div>
 
+    <!-- Cart Items -->
     {% if cart.cart_items.count == 0 %}
     <p class="text-center text-gray-600">Your cart is empty.</p>
     {% else %}
-    <div class="flex flex-col space-y-6">
+    <div class="cart-items space-y-6">
         {% for item in cart.cart_items.all %}
-        <div
-            class="flex flex-col md:flex-row items-center bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+        <div class="flex items-center bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
             <!-- Product Image -->
             <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
-                class="w-32 h-32 object-cover rounded-lg mr-0 md:mr-6 mb-4 md:mb-0" />
+                class="w-20 h-20 object-cover rounded-lg" />
 
             <!-- Product Details -->
-            <div class="flex-1">
-                <h3 class="text-xl font-semibold text-gray-900">{{ item.product.name }}</h3>
-                <p class="text-sm text-gray-600">${{ item.product.price }}</p>
+            <div class="flex-1 ml-6">
+                <h3 class="text-lg font-semibold text-gray-800">{{ item.product.name }}</h3>
+                <p class="text-sm text-gray-500">Price: ${{ item.product.price }}</p>
+                <p class="text-sm text-gray-500">Subtotal: <span id="cart-item-total-{{ item.id }}">${{ item.total_price
+                        }}</span></p>
             </div>
 
-            <!-- Quantity and Total -->
+            <!-- Quantity Controls -->
             <div class="flex items-center space-x-4">
-                <!-- Quantity Input -->
-                <div>
-                    <label for="quantity-{{ item.id }}" class="sr-only">Quantity</label>
-                    <input type="number" id="quantity-{{ item.id }}" name="quantity" value="{{ item.quantity }}" min="1"
-                        class="border p-2 w-16 rounded-lg quantity-input" data-cart-item-id="{{ item.id }}" />
-                </div>
-
-                <!-- Total Price -->
-                <p class="text-lg font-semibold text-gray-800" id="cart-item-total-{{ item.id }}">${{item.total_price}}</p>
+                <label for="quantity-{{ item.id }}" class="sr-only">Quantity</label>
+                <input type="number" id="quantity-{{ item.id }}" name="quantity" value="{{ item.quantity }}" min="1"
+                    class="border p-2 w-16 rounded-lg text-center quantity-input" data-cart-item-id="{{ item.id }}" />
             </div>
 
             <!-- Remove Button -->
-            <div class="mt-4 md:mt-0">
-                <a href="{% url 'cart:remove_from_cart' item.id %}" class="text-red-500 hover:text-red-700">Remove</a>
-            </div>
+            <a href="{% url 'cart:remove_from_cart' item.id %}" class="text-red-500 hover:text-red-700 ml-4">
+                Remove
+            </a>
         </div>
         {% endfor %}
     </div>
 
-    <!-- Total Cost Section -->
+    <!-- Cart Total -->
     <div class="mt-6 text-right">
-        <p class="text-2xl font-bold text-gray-800">Cart Total: <span id="cart-total">${{ cart.total_cost }}</span></p>
+        <p class="text-2xl font-bold text-gray-800">Total: <span id="cart-total">${{ cart.total_cost }}</span></p>
     </div>
 
-    <!-- Checkout Section -->
+    <!-- Checkout Button -->
     <div class="mt-6 flex justify-center">
-        <a class="bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 transition-colors">Proceed to
-            Checkout</a>
+        <a class="bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 transition duration-200">
+            Proceed to Checkout
+        </a>
     </div>
     {% endif %}
 </div>
 
-<!-- JavaScript to auto-update the cart -->
+<!-- JavaScript to Update Cart -->
 <script>
     document.querySelectorAll('.quantity-input').forEach(input => {
         input.addEventListener('change', function () {
@@ -72,11 +86,11 @@
 
             // Display updating feedback
             const itemTotalElement = document.querySelector(`#cart-item-total-${cartItemId}`);
-            const originalText = itemTotalElement.innerText;
-            itemTotalElement.innerText = 'Updating...';
+            const originalText = itemTotalElement ? itemTotalElement.innerText : '';
+            if (itemTotalElement) itemTotalElement.innerText = 'Updating...';
 
             // Perform AJAX request
-            fetch(`/cart/update/ajax/${cartItemId}/`, {
+            fetch(`/cart/update/${cartItemId}/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -88,32 +102,28 @@
                 .then(data => {
                     if (data.success) {
                         // Update the totals on success
-                        itemTotalElement.innerText = `$${data.total_price}`;
+                        if (itemTotalElement) itemTotalElement.innerText = `$${data.total_price}`;
                         document.querySelector('#cart-total').innerText = `$${data.cart_total}`;
+                        document.querySelector('#cart-counter').innerText = data.total_cart_items;
                     } else {
-                        // Revert to original and alert on failure
-                        itemTotalElement.innerText = originalText;
                         alert(data.message || 'Failed to update cart item quantity');
                     }
                 })
                 .catch(error => {
-                    // Revert to original and alert on error
-                    itemTotalElement.innerText = originalText;
                     alert('An error occurred while updating the cart');
                     console.error('Error:', error);
+                    if (itemTotalElement) itemTotalElement.innerText = originalText;
                 });
         });
     });
 
-
-    // Function to get CSRF token from cookies
+    // Function to get CSRF token
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
             const cookies = document.cookie.split(';');
             for (let i = 0; i < cookies.length; i++) {
                 const cookie = cookies[i].trim();
-                // Does this cookie string begin with the name we want?
                 if (cookie.substring(0, name.length + 1) === (name + '=')) {
                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                     break;
