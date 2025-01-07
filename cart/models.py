@@ -1,11 +1,14 @@
 from django.db import models
-from django.contrib.auth.models import User
 from product.models import Product
+from order.models import Order
+from django.conf import settings
 
 
 class Cart(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    order = models.OneToOneField(
+        Order, null=True, blank=True, on_delete=models.SET_NULL
+    )
 
     @property
     def total_cost(self):
@@ -13,8 +16,8 @@ class Cart(models.Model):
 
 
 class CartItem(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="cart_items")
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="cart_items")
     quantity = models.PositiveIntegerField(default=1)
 
     @property

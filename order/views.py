@@ -9,6 +9,24 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 
 
+def cart_view(request):
+    cart = Cart.objects.get(user=request.user)
+
+    if not cart.order:
+        # Create or retrieve an Order instance
+        total_cost = sum(
+            item.product.price * item.quantity for item in order.cart_items.all()
+        )
+        order = Order.objects.create(user=request.user, total_cost=total_cost)
+        cart.order = order
+        cart.save()
+
+    context = {
+        "cart": cart,
+    }
+    return render(request, "cart/cart.html", context)
+
+
 @login_required
 def create_order(request):
     try:

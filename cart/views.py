@@ -1,6 +1,6 @@
 # cart/views.py
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Cart, CartItem
+from .models import Cart, CartItem, Order
 from product.models import Product
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -15,10 +15,26 @@ def get_or_create_cart(user):
 
 @login_required
 def cart_view(request):
-    cart = request.user.cart  # Assuming each user has a cart
-    total_items = sum(
-        item.quantity for item in cart.cart_items.all()
-    )  # Count total products
+    # Get or create the user's cart
+    cart = get_or_create_cart(request.user)
+
+    # Ensure the cart has an associated order
+    if not cart.order:
+        order = Order.objects.create(user=request.user, total_cost=0)
+        cart.order = order
+        cart.save()
+
+    # Calculate total cost and total items in the cart
+    total_items = sum(item.quantity for item in cart.cart_items.all())
+    cart_total_cost = sum(
+        (item.product.price or 0) * (item.quantity or 0)
+        for item in cart.cart_items.all()
+    )
+
+    # Update the cart's order total cost
+    cart.order.total_cost = cart_total_cost
+    cart.order.save()
+
     context = {
         "cart": cart,
         "total_items": total_items,

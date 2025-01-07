@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     #  your apps
     "product",
     "cart",
-    'order',
+    "order",
+    "payment",
 ]
 
 TAILWIND_APP_NAME = "theme"  # This is the name of the app that will be used to generate the tailwind files
@@ -169,3 +170,7 @@ DEFAULT_FROM_EMAIL = "webmaster@localhost"
 SITE_ID = 1
 
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
+
+# Razorpay API credentials
+RAZORPAY_KEY_ID = "your_razorpay_key_id"
+RAZORPAY_KEY_SECRET = "your_razorpay_key_secret"
